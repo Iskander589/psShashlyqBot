@@ -1,1 +1,1 @@
-TOKEN="1057002668:AAGzQ3zg1u-9gF1xoqgch3aYmcC3zqYZBfA"
+TOKEN=""
