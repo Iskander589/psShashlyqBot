@@ -59,6 +59,19 @@ def process_button_go(message):
         print(players)
         if len(players) == 4:
             bot.reply_to(message, ", ".join([str(i) for i in players]) + " - Игроки готовы")
+            number_of_players = len(players)
+            number_of_teams = 2
+            both_teams = []
+            while number_of_players > 0 and number_of_teams > 0:
+                team = random.sample(players, int(number_of_players/number_of_teams))
+                for x in team:
+                    players.remove(x)
+                number_of_players -= int(number_of_players/number_of_teams)
+                number_of_teams -= 1
+                both_teams.append(team)
+            bot.send_message(chat_id, "Команды собраны:")
+            bot.send_message(chat_id, ", ".join(str(i) for i in both_teams[0]) + " - первая команда")
+            bot.send_message(chat_id, ", ".join(str(i) for i in both_teams[1]) + " - вторая команда")
     elif message.from_user.username in players:
         bot.reply_to(message, "Ты уже присутствуешь в списке игроков")
     else:
