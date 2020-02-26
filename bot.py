@@ -44,8 +44,11 @@ def set_date(message):
 
 @bot.message_handler(regexp='Го катку ⚽')
 def process_button_go_katku(message):
-    if message.from_user.username not in players:
-        players.append(message.from_user.username)
+    if not players:
+        if message.from_user.username not in players:
+            players.append(message.from_user.username)
+    else:
+        bot.send_message(chat_id, "Список игроков уже создан. Нажмите \"Го\", чтобы подтвердить участие.")
     print(players)
 
 
@@ -55,7 +58,7 @@ def process_button_go(message):
         players.append(message.from_user.username)
         print(players)
         if len(players) == 4:
-            bot.reply_to(message, players + " - Игроки готовы")
+            bot.reply_to(message, ", ".join([str(i) for i in players]) + " - Игроки готовы")
     elif message.from_user.username in players:
         bot.reply_to(message, "Ты уже присутствуешь в списке игроков")
     else:
