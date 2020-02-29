@@ -13,23 +13,24 @@ chat_id = '-222424423'
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    bot.send_message(chat_id, 'Test', reply_markup=kb.markup)
+    bot.send_message(chat_id, 'Выберите действие', reply_markup=kb.markup)
 
 
-@bot.message_handler(regexp='Когда в Харатс?')
+@bot.message_handler(regexp='Идем тусить')
 def get_calendar(message):
+    global choose_date
     now = datetime.datetime.now()
     markup = telegramcalendar.create_calendar(now.year,now.month)
-    bot.send_message(message.chat.id, "Пожалуйста, выберите дату", reply_markup=markup.to_json())
+    choose_date = bot.send_message(message.chat.id, "Пожалуйста, выберите дату", reply_markup=markup.to_json())
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def set_date(message):
     if "DAY" in message.data:
         bot.answer_callback_query(message.id, show_alert=True, text="Дата выбрана")
+        bot.delete_message(message.chat.id, choose_date.message_id)
         telegram.bot.Bot.send_poll(telegram.bot.Bot(TOKEN), chat_id, "Идем в Харатс {}.{}.{}?".format(
-            message.data.split(";")[3], message.data.split(";")[2], message.data.split(";")[1]), ['Да', 'Нет',
-                                                                                                  'F1Вперед'])
+            message.data.split(";")[3], message.data.split(";")[2], message.data.split(";")[1]), ['Да', 'Нет'])
     elif "NEXT-MONTH" in message.data:
         pass #TODO добавить вывод следующего месяца
     elif "PREV-MONTH" in message.data:
