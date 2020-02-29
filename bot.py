@@ -27,15 +27,32 @@ def get_calendar(message):
 @bot.callback_query_handler(func=lambda call: True)
 def set_date(message):
     if "DAY" in message.data:
-        bot.answer_callback_query(message.id, show_alert=True, text="Дата выбрана")
-        bot.delete_message(message.chat.id, choose_date.message_id)
-        telegram.bot.Bot.send_poll(telegram.bot.Bot(TOKEN), chat_id, "Идем в Харатс {}.{}.{}?".format(
-            message.data.split(";")[3], message.data.split(";")[2], message.data.split(";")[1]), ['Да', 'Нет'])
+        ### START Rishat ###
+        global date, place 
+        date = message.data
+        bot.answer_callback_query(message.id, text="Дата выбрана")
+        bot.delete_message(chat_id, choose_date.message_id)
+        keyboard = [[telegram.InlineKeyboardButton("Forum", callback_data='forum'), telegram.InlineKeyboardButton("Harat's", callback_data='harats')], [telegram.InlineKeyboardButton("All Saints", callback_data='all_saints')]]
+        reply_markup = telegram.InlineKeyboardMarkup(keyboard)
+        place = bot.send_message(chat_id, "Выберите место:", reply_markup=reply_markup.to_json())
+    if "forum" in message.data:
+        bot.delete_message(chat_id, place.message_id)
+        telegram.bot.Bot.send_poll(telegram.bot.Bot(TOKEN), chat_id, "Идем в Forum {}.{}.{}?".format(
+            date.split(";")[3], date.split(";")[2], date.split(";")[1]), ['Да', 'Нет'])
+    if "harats" in message.data:
+        bot.delete_message(chat_id, place.message_id)
+        telegram.bot.Bot.send_poll(telegram.bot.Bot(TOKEN), chat_id, "Идем в Harat's {}.{}.{}?".format(
+            date.split(";")[3], date.split(";")[2], date.split(";")[1]), ['Да', 'Нет'])
+    if "all_saints" in message.data:
+        bot.delete_message(chat_id, place.message_id)
+        telegram.bot.Bot.send_poll(telegram.bot.Bot(TOKEN), chat_id, "Идем в All Saints {}.{}.{}?".format(
+            date.split(";")[3], date.split(";")[2], date.split(";")[1]), ['Да', 'Нет'])
+        ### END Rishat ####
     elif "NEXT-MONTH" in message.data:
         pass #TODO добавить вывод следующего месяца
     elif "PREV-MONTH" in message.data:
         bot.answer_callback_query(message.id, show_alert=True, text="Нельзя вернуться в прошлое")
-    print(message.data)
+#    print(message.data)
 
 
 #@bot.message_handler(func=lambda m: True)
